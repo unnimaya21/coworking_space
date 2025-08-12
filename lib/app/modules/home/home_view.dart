@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:perfume_app/app/domain/entities/home_data_entity.dart';
+import 'package:perfume_app/app/modules/home/widgets/brands_section_widget.dart';
+import 'package:perfume_app/app/modules/home/widgets/categories_section_widget.dart';
+import 'package:perfume_app/app/modules/home/widgets/image_carousel.dart';
+import 'package:perfume_app/app/modules/home/widgets/new_arrivals_widget.dart';
+import 'package:perfume_app/app/modules/home/widgets/request_quote_widget.dart';
+import 'package:perfume_app/app/modules/widgets/text_widget.dart';
+import 'package:shimmer/shimmer.dart';
+import 'home_controller.dart';
+import 'widgets/search_bar_widget.dart';
+
+class HomeView extends GetView<HomeController> {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return _buildLoadingState();
+          }
+          final List<HomeFieldEntity> homeFields =
+              controller.homeData.homeFields ?? [];
+
+          return RefreshIndicator(
+            onRefresh: controller.loadHomeData,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 20),
+                  SearchBarWidget(
+                    onChanged: controller.onSearchChanged,
+                    onScanPressed: controller.onScanPressed,
+                  ),
+                  const SizedBox(height: 24),
+                  PerfumeBanner(
+                    items:
+                        homeFields
+                            .firstWhere((field) => field.type == 'carousel')
+                            .carouselItems ??
+                        [],
+                  ),
+
+                  const SizedBox(height: 32),
+                  BrandsSectionWidget(
+                    brands:
+                        homeFields
+                            .firstWhere((field) => field.type == 'brands')
+                            .brands ??
+                        [],
+                    onBrandPressed: (brand) {
+                      controller.onBrandPressed(brand);
+                      return null;
+                    },
+                    onViewAll: controller.onViewAllBrands,
+                  ),
+                  const SizedBox(height: 32),
+                  CategoriesSectionWidget(
+                    categories:
+                        homeFields
+                            .firstWhere((field) => field.type == 'category')
+                            .categories ??
+                        [],
+                    onCategoryPressed: controller.onCategoryPressed,
+                    onViewAll: controller.onViewAllCategories,
+                  ),
+
+                  RequestQuoteWidget(),
+                  NewArrivalsWidget(
+                    newArrivals:
+                        homeFields
+                            .firstWhere((field) => field.type == 'collection')
+                            .products ??
+                        [],
+                    onProductPressed: (product) {
+                      controller.onProductPressed(product);
+                    },
+                    onViewAll: () {
+                      controller.onViewAllNewArrivals();
+                    },
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'assets/images/banner2.png',
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: 180,
+                    ),
+                  ),
+                  NewArrivalsWidget(
+                    newArrivals:
+                        homeFields
+                            .firstWhere((field) => field.type == 'collection')
+                            .products ??
+                        [],
+                    onProductPressed: (product) {
+                      controller.onProductPressed(product);
+                    },
+                    onViewAll: () {
+                      controller.onViewAllNewArrivals();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextWidget(
+              text: 'Welcome!',
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ],
+        ),
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(
+            Icons.notifications_outlined,
+            color: Colors.black54,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 200,
+              height: 24,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              height: 180,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
