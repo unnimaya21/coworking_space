@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:perfume_app/app/domain/entities/home_data_entity.dart';
+import 'package:perfume_app/app/modules/home/widgets/banner_grid_widget.dart';
 import 'package:perfume_app/app/modules/home/widgets/brands_section_widget.dart';
 import 'package:perfume_app/app/modules/home/widgets/categories_section_widget.dart';
 import 'package:perfume_app/app/modules/home/widgets/image_carousel.dart';
@@ -78,6 +79,30 @@ class HomeView extends GetView<HomeController> {
                   RequestQuoteWidget(),
                   if (homeFields.isNotEmpty)
                     NewArrivalsWidget(
+                      title: 'New Arrivals',
+                      newArrivals:
+                          homeFields
+                              .firstWhere((field) => field.type == 'collection')
+                              .products ??
+                          [],
+                      onProductPressed: (product) {
+                        controller.onProductPressed(product);
+                      },
+                      onViewAll: () {
+                        controller.onViewAllNewArrivals();
+                      },
+                    ),
+                  BannerGridWidget(
+                    items:
+                        homeFields
+                            .firstWhere((field) => field.type == 'banner-grid')
+                            .bannerItems ??
+                        [],
+                    onShopNow: () {},
+                  ),
+                  if (homeFields.isNotEmpty)
+                    NewArrivalsWidget(
+                      title: 'Latest Products',
                       newArrivals:
                           homeFields
                               .firstWhere((field) => field.type == 'collection')
@@ -101,6 +126,7 @@ class HomeView extends GetView<HomeController> {
                   ),
                   if (homeFields.isNotEmpty)
                     NewArrivalsWidget(
+                      title: 'New Arrivals',
                       newArrivals:
                           homeFields
                               .firstWhere((field) => field.type == 'collection')

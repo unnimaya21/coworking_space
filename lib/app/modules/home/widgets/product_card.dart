@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:perfume_app/app/core/utils/app_colors.dart';
 import 'package:perfume_app/app/core/utils/storage_keys.dart';
 import 'package:perfume_app/app/domain/entities/home_data_entity.dart';
 import 'package:perfume_app/app/modules/home/home_controller.dart';
@@ -63,7 +64,7 @@ class _ProductCardState extends State<ProductCard> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(8),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -78,14 +79,14 @@ class _ProductCardState extends State<ProductCard> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: AppColors.offerBgColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: TextWidget(
                           text: '$offerPercentage% OFF',
-                          color: Colors.white,
+                          color: AppColors.offerTextColor,
                           fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       )
                       : SizedBox.shrink(),
@@ -140,6 +141,7 @@ class _ProductCardState extends State<ProductCard> {
                   text: widget.product.name ?? 'No Name',
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                  color: AppColors.prodTitle,
                 ),
               ),
               const SizedBox(height: 8),
@@ -153,7 +155,7 @@ class _ProductCardState extends State<ProductCard> {
                         '${widget.product.currency ?? ''}${widget.product.actualPrice ?? '0.00'}',
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
-                    color: Colors.grey,
+                    color: AppColors.prodPrice,
                     isStriked: true,
                   ),
                   const SizedBox(height: 8),
@@ -170,7 +172,7 @@ class _ProductCardState extends State<ProductCard> {
                       TextWidget(
                         text: widget.product.unit ?? '',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppColors.black2,
                         fontWeight: FontWeight.normal,
                       ),
                     ],
@@ -193,6 +195,7 @@ class _ProductCardState extends State<ProductCard> {
                         textColor: Colors.black,
                         borderColor: Colors.black,
                         backgroundColor: Colors.white,
+                        onPressed: () {},
                       ),
                     ),
                     const SizedBox(width: 8),

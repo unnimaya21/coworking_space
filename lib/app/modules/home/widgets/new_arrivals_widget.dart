@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:perfume_app/app/domain/entities/home_data_entity.dart';
 import 'package:perfume_app/app/modules/home/widgets/product_card.dart';
@@ -7,12 +9,14 @@ class NewArrivalsWidget extends StatelessWidget {
   final List<ProductEntity> newArrivals;
   final Function(ProductEntity) onProductPressed;
   final VoidCallback onViewAll;
+  String title;
 
-  const NewArrivalsWidget({
+  NewArrivalsWidget({
     super.key,
     required this.newArrivals,
     required this.onProductPressed,
     required this.onViewAll,
+    required this.title,
   });
 
   @override
@@ -22,11 +26,7 @@ class NewArrivalsWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextWidget(
-              text: 'New Arrivals',
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+            TextWidget(text: title, fontSize: 18, fontWeight: FontWeight.w600),
             GestureDetector(
               onTap: onViewAll,
               child: TextWidget(
@@ -39,9 +39,9 @@ class NewArrivalsWidget extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
+        const SizedBox(height: 8),
+        AspectRatio(
+          aspectRatio: 1.0,
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
