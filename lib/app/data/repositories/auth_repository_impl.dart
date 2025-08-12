@@ -31,10 +31,8 @@ class AuthRepositoryImpl implements AuthRepository {
         final data = response.data['data'] ?? response.data;
         log('Login successful: ${data.toString()}');
 
-        // Store token and user data
         await _storage.write(StorageKeys.authToken, data['access_token'] ?? '');
 
-        // Create UserModel and convert to UserEntity
         final userModel = UserModel.fromJson(data);
         final userEntity = UserEntity.fromModel(userModel);
 
@@ -57,10 +55,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<UserEntity?> getCurrentUser() async {
     final userData = _storage.read(StorageKeys.userData);
     if (userData != null) {
-      // 1. Create a UserModel from the stored data
       final userModel = UserModel.fromJson(userData);
 
-      // 2. Convert the UserModel to a UserEntity using the factory constructor
       return UserEntity.fromModel(userModel);
     }
     return null;

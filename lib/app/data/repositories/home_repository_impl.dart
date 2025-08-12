@@ -21,7 +21,6 @@ class HomeRepositoryImpl implements HomeRepository {
           response.data['data'] ?? response.data,
         );
 
-        // Convert the model to an entity before returning
         final homeDataEntity = HomeDataEntity.fromModel(homeDataModel);
 
         return Right(homeDataEntity);
