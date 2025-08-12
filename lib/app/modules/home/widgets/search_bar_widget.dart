@@ -16,7 +16,7 @@ class SearchBarWidget extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          flex: 2,
+          flex: 3,
           child: Container(
             height: 50,
             decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class SearchBarWidget extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          flex: 1,
+          flex: 2,
           child: GestureDetector(
             onTap: onScanPressed,
             child: Container(
@@ -55,11 +55,13 @@ class SearchBarWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextWidget(
-                      text: 'Scan Here',
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                    Flexible(
+                      child: TextWidget(
+                        text: 'Scan Here',
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Image.asset('assets/icons/barcode.png'),
                   ],

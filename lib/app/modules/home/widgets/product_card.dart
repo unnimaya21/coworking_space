@@ -179,7 +179,7 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               // Buttons Section
               Obx(() {
                 final savedProduct = homeController.products.firstWhereOrNull(
@@ -188,40 +188,52 @@ class _ProductCardState extends State<ProductCard> {
                 final cartCount = savedProduct?.cartCount ?? 0;
 
                 return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: CustomButton(
-                        text: 'RFQ',
-                        textColor: Colors.black,
-                        borderColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        onPressed: () {},
+                    Flexible(
+                      flex: 2,
+                      child: SizedBox(
+                        height: 40,
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        child: CustomButton(
+                          text: 'RFQ',
+                          textColor: Colors.black,
+                          borderColor: AppColors.borderColor,
+                          backgroundColor: Colors.white,
+                          onPressed: () {},
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    (cartCount >= 1)
-                        ? Expanded(
-                          child: QuantitySelector(
-                            count: cartCount,
-                            onAdd:
-                                () => homeController.incrementCartCount(
-                                  widget.product,
+                    Flexible(
+                      flex: 3,
+                      child: SizedBox(
+                        height: 40,
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        child:
+                            (cartCount >= 1)
+                                ? QuantitySelector(
+                                  count: cartCount,
+                                  onAdd:
+                                      () => homeController.incrementCartCount(
+                                        widget.product,
+                                      ),
+                                  onSubtract:
+                                      () => homeController.decrementCartCount(
+                                        widget.product,
+                                      ),
+                                )
+                                : CustomButton(
+                                  text: 'Add to Cart',
+                                  textColor: Colors.white,
+                                  backgroundColor: Colors.red,
+                                  onPressed:
+                                      () => homeController.incrementCartCount(
+                                        widget.product,
+                                      ),
                                 ),
-                            onSubtract:
-                                () => homeController.decrementCartCount(
-                                  widget.product,
-                                ),
-                          ),
-                        )
-                        : CustomButton(
-                          text: 'Add to Cart',
-                          textColor: Colors.white,
-                          backgroundColor: Colors.red,
-                          onPressed:
-                              () => homeController.incrementCartCount(
-                                widget.product,
-                              ),
-                        ),
+                      ),
+                    ),
                   ],
                 );
               }),

@@ -33,7 +33,8 @@ class RequestQuoteWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  height: 40,
                   child: CustomButton(
                     text: 'Create RFQ',
                     backgroundColor: Colors.white,

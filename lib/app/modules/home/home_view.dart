@@ -92,14 +92,17 @@ class HomeView extends GetView<HomeController> {
                         controller.onViewAllNewArrivals();
                       },
                     ),
-                  BannerGridWidget(
-                    items:
-                        homeFields
-                            .firstWhere((field) => field.type == 'banner-grid')
-                            .bannerItems ??
-                        [],
-                    onShopNow: () {},
-                  ),
+                  if (homeFields.isNotEmpty)
+                    BannerGridWidget(
+                      items:
+                          homeFields
+                              .firstWhere(
+                                (field) => field.type == 'banner-grid',
+                              )
+                              .bannerItems ??
+                          [],
+                      onShopNow: () {},
+                    ),
                   if (homeFields.isNotEmpty)
                     NewArrivalsWidget(
                       title: 'Latest Products',

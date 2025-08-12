@@ -62,6 +62,7 @@ class _TextWidgetState extends State<TextWidget> {
                 : widget.isStriked
                 ? TextDecoration.lineThrough
                 : TextDecoration.none,
+        decorationColor: widget.color,
         fontFamily: 'Hellix',
       ),
     );
