@@ -17,7 +17,6 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.apiProvider});
 
   @override
-  // auth_repository.dart
   Future<Either<String, UserEntity>> login({
     required String deviceToken,
     required int deviceType,

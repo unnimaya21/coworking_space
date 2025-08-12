@@ -45,9 +45,9 @@ class HomeFieldModel {
   List<Brand>? brands;
   List<Category>? categories;
   List<Product>? products;
-  BannerItem? banner; // Added for single banner
-  List<BannerItem>? banners; // For the banner-grid type
-  String? image; // For rfq and future-order types
+  BannerItem? banner;
+  List<BannerItem>? banners;
+  String? image;
   int? collectionId;
   String? name;
 
@@ -67,7 +67,6 @@ class HomeFieldModel {
   HomeFieldModel.fromJson(Map<String, dynamic> json) {
     type = json['type'];
 
-    // Handle different field types
     if (json['carousel_items'] != null) {
       carouselItems =
           (json['carousel_items'] as List)
@@ -90,18 +89,15 @@ class HomeFieldModel {
               .map((item) => Product.fromJson(item))
               .toList();
     }
-    // Handle the single banner field type
     if (json['banner'] != null) {
       banner = BannerItem.fromJson(json['banner']);
     }
-    // Handle the banner-grid field type
     if (json['banners'] != null) {
       banners =
           (json['banners'] as List)
               .map((item) => BannerItem.fromJson(item))
               .toList();
     }
-    // Handle the rfq and future-order fields which just have an image
     if (json['image'] != null) {
       image = json['image'];
     }

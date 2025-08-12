@@ -63,6 +63,7 @@ class AuthView extends GetView<AuthController> {
                             )
                             : const TextWidget(
                               text: 'Get Started',
+                              color: Colors.white,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),

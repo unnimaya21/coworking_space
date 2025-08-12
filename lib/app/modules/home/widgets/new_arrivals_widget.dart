@@ -49,7 +49,10 @@ class NewArrivalsWidget extends StatelessWidget {
             itemCount: newArrivals.length,
             itemBuilder: (context, index) {
               final product = newArrivals[index];
-              return ProductCard(product: product);
+              return ProductCard(
+                product: product,
+                onProductPressed: onProductPressed,
+              );
             },
           ),
         ),

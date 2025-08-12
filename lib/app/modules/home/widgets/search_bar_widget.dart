@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perfume_app/app/modules/widgets/text_widget.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final Function(String) onChanged;
@@ -15,11 +16,13 @@ class SearchBarWidget extends StatelessWidget {
     return Row(
       children: [
         Expanded(
+          flex: 2,
           child: Container(
             height: 50,
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(41),
+              border: Border.all(color: Colors.grey[300]!, width: 1),
             ),
             child: TextField(
               onChanged: onChanged,
@@ -37,19 +40,31 @@ class SearchBarWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        GestureDetector(
-          onTap: onScanPressed,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF4444),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.qr_code_scanner,
-              color: Colors.white,
-              size: 24,
+        Expanded(
+          flex: 1,
+          child: GestureDetector(
+            onTap: onScanPressed,
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF4444),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextWidget(
+                      text: 'Scan Here',
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    Image.asset('assets/icons/barcode.png'),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

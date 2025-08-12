@@ -32,11 +32,9 @@ class ApiProvider {
           log('API Request: ${options.method} ${options.path} $token');
           if (token != null) {
             options.headers.addAll({
-              "Authorization": 'Bearer $token',
+              "Authorization": '${ApiConstants.bearerPrefix}$token',
               "Accept": "*/*",
             });
-            // options.headers[ApiConstants.authorizationHeader] =
-            //     '${ApiConstants.bearerPrefix}$token';
           }
           handler.next(options);
         },

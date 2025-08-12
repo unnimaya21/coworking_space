@@ -1,5 +1,3 @@
-// home_entities.dart
-
 import 'package:perfume_app/app/data/models/home_data_model.dart';
 
 class HomeDataEntity {
@@ -135,9 +133,9 @@ class ProductEntity {
   final String? name;
   final String? currency;
   final String? unit;
-  final bool? wishlisted;
+  bool? wishlisted;
   final bool? rfqStatus;
-  final int? cartCount;
+  int? cartCount;
   final int? futureCartCount;
   final bool? hasStock;
   final String? price;
@@ -179,6 +177,43 @@ class ProductEntity {
       offer: model.offer,
       offerPrices: model.offerPrices,
     );
+  }
+
+  factory ProductEntity.fromJson(Map<String, dynamic> json) {
+    return ProductEntity(
+      id: json['id'] as int?,
+      image: json['image'] as String?,
+      name: json['name'] as String?,
+      currency: json['currency'] as String?,
+      unit: json['unit'] as String?,
+      wishlisted: json['wishlisted'] as bool?,
+      rfqStatus: json['rfq_status'] as bool?,
+      cartCount: json['cart_count'] as int?,
+      futureCartCount: json['future_cart_count'] as int?,
+      hasStock: json['has_stock'] as bool?,
+      price: json['price'] as String?,
+      actualPrice: json['actual_price'] as String?,
+      offer: json['offer'] as String?,
+      offerPrices: json['offer_prices'] as List<dynamic>?,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'image': image,
+      'name': name,
+      'currency': currency,
+      'unit': unit,
+      'wishlisted': wishlisted,
+      'rfq_status': rfqStatus,
+      'cart_count': cartCount,
+      'future_cart_count': futureCartCount,
+      'has_stock': hasStock,
+      'price': price,
+      'actual_price': actualPrice,
+      'offer': offer,
+      'offer_prices': offerPrices,
+    };
   }
 }
 

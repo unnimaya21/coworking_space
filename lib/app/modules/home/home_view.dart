@@ -40,52 +40,56 @@ class HomeView extends GetView<HomeController> {
                     onScanPressed: controller.onScanPressed,
                   ),
                   const SizedBox(height: 24),
-                  PerfumeBanner(
-                    items:
-                        homeFields
-                            .firstWhere((field) => field.type == 'carousel')
-                            .carouselItems ??
-                        [],
-                  ),
+                  if (homeFields.isNotEmpty)
+                    PerfumeBanner(
+                      items:
+                          homeFields
+                              .firstWhere((field) => field.type == 'carousel')
+                              .carouselItems ??
+                          [],
+                    ),
 
                   const SizedBox(height: 32),
-                  BrandsSectionWidget(
-                    brands:
-                        homeFields
-                            .firstWhere((field) => field.type == 'brands')
-                            .brands ??
-                        [],
-                    onBrandPressed: (brand) {
-                      controller.onBrandPressed(brand);
-                      return null;
-                    },
-                    onViewAll: controller.onViewAllBrands,
-                  ),
+                  if (homeFields.isNotEmpty)
+                    BrandsSectionWidget(
+                      brands:
+                          homeFields
+                              .firstWhere((field) => field.type == 'brands')
+                              .brands ??
+                          [],
+                      onBrandPressed: (brand) {
+                        controller.onBrandPressed(brand);
+                        return null;
+                      },
+                      onViewAll: controller.onViewAllBrands,
+                    ),
                   const SizedBox(height: 32),
-                  CategoriesSectionWidget(
-                    categories:
-                        homeFields
-                            .firstWhere((field) => field.type == 'category')
-                            .categories ??
-                        [],
-                    onCategoryPressed: controller.onCategoryPressed,
-                    onViewAll: controller.onViewAllCategories,
-                  ),
+                  if (homeFields.isNotEmpty)
+                    CategoriesSectionWidget(
+                      categories:
+                          homeFields
+                              .firstWhere((field) => field.type == 'category')
+                              .categories ??
+                          [],
+                      onCategoryPressed: controller.onCategoryPressed,
+                      onViewAll: controller.onViewAllCategories,
+                    ),
 
                   RequestQuoteWidget(),
-                  NewArrivalsWidget(
-                    newArrivals:
-                        homeFields
-                            .firstWhere((field) => field.type == 'collection')
-                            .products ??
-                        [],
-                    onProductPressed: (product) {
-                      controller.onProductPressed(product);
-                    },
-                    onViewAll: () {
-                      controller.onViewAllNewArrivals();
-                    },
-                  ),
+                  if (homeFields.isNotEmpty)
+                    NewArrivalsWidget(
+                      newArrivals:
+                          homeFields
+                              .firstWhere((field) => field.type == 'collection')
+                              .products ??
+                          [],
+                      onProductPressed: (product) {
+                        controller.onProductPressed(product);
+                      },
+                      onViewAll: () {
+                        controller.onViewAllNewArrivals();
+                      },
+                    ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
@@ -95,19 +99,20 @@ class HomeView extends GetView<HomeController> {
                       height: 180,
                     ),
                   ),
-                  NewArrivalsWidget(
-                    newArrivals:
-                        homeFields
-                            .firstWhere((field) => field.type == 'collection')
-                            .products ??
-                        [],
-                    onProductPressed: (product) {
-                      controller.onProductPressed(product);
-                    },
-                    onViewAll: () {
-                      controller.onViewAllNewArrivals();
-                    },
-                  ),
+                  if (homeFields.isNotEmpty)
+                    NewArrivalsWidget(
+                      newArrivals:
+                          homeFields
+                              .firstWhere((field) => field.type == 'collection')
+                              .products ??
+                          [],
+                      onProductPressed: (product) {
+                        controller.onProductPressed(product);
+                      },
+                      onViewAll: () {
+                        controller.onViewAllNewArrivals();
+                      },
+                    ),
                 ],
               ),
             ),
