@@ -47,6 +47,9 @@ void _initDependencies() {
     GetHomeDataUseCase(repository: Get.find()),
     permanent: true,
   );
+
+  //[permanent] keeps the Instance in memory and persist it, not following Get.smartManagement rules.
+  //Although, can be removed by GetInstance.reset() and Get.delete()
 }
 
 class MyApp extends StatelessWidget {

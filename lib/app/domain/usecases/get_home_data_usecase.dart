@@ -10,4 +10,7 @@ class GetHomeDataUseCase {
   Future<Either<String, HomeDataEntity>> call() async {
     return await repository.getHomeData();
   }
+
+  //The call() method in your GetHomeDataUseCase is an operator overloading feature
+  //in Dart that allows you to call an instance of a class like a function.
 }
