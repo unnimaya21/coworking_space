@@ -1,4 +1,3 @@
-// lib/presentation/home/views/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coworking_space_app/app/modules/filter/filter_view.dart';
@@ -11,8 +10,6 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Inject the HomeController. Get.put() initializes the controller
-    // and makes it available throughout the widget tree.
     final controller = Get.put(HomeController());
 
     return Scaffold(

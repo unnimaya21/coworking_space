@@ -1,6 +1,5 @@
 class ApiConstants {
-  static const String baseUrl =
-      'https://s419.previewbay.com/fragrance-b2b-backend/api/v1';
+  static const String baseUrl = '';
   static const String loginEndpoint = '/anonymous-login';
   static const String homeEndpoint = '/home';
 

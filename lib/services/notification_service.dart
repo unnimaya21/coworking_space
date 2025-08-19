@@ -10,9 +10,17 @@ import 'package:timezone/data/latest_all.dart' as tzdata;
 class NotificationService extends GetxService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  final FlutterLocalNotificationsPlugin flnp =
-      FlutterLocalNotificationsPlugin();
-  NotificationDetails kLoudDetails = NotificationDetails(
+
+  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    'booking_live',
+    'Booking Live Alerts',
+    description: 'Time-sensitive booking reminders.',
+    importance: Importance.max,
+    playSound: true,
+    enableVibration: true,
+  );
+
+  static const NotificationDetails _kLoudDetails = NotificationDetails(
     android: AndroidNotificationDetails(
       'booking_live',
       'Booking Live Alerts',
@@ -27,19 +35,37 @@ class NotificationService extends GetxService {
 
   Future<void> init() async {
     tzdata.initializeTimeZones();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-
+    const initSettings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    );
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: (
-        NotificationResponse notificationResponse,
-      ) async {
-        // Handle notification tap
-      },
+      initSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse _) async {},
+    );
+
+    final android =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    await android?.requestNotificationsPermission();
+
+    await android?.createNotificationChannel(_channel);
+  }
+
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    await flutterLocalNotificationsPlugin.show(
+      id,
+      title,
+      body,
+      _kLoudDetails,
+      payload: 'direct',
     );
   }
 
@@ -49,148 +75,81 @@ class NotificationService extends GetxService {
     required String body,
     required DateTime scheduledDate,
   }) async {
-    // Sanity: avoid “past” times
-    if (scheduledDate.isBefore(DateTime.now())) {
-      // add a few seconds so we don’t error out
-      scheduledDate = DateTime.now().add(const Duration(seconds: 5));
-    }
+    // Nudge to future if needed
+    final now = DateTime.now().add(const Duration(seconds: 2));
+    final when =
+        scheduledDate.isAfter(now)
+            ? scheduledDate
+            : DateTime.now().add(const Duration(seconds: 5));
 
-    // final details = NotificationDetails(android: androidDetails);
+    final tzTime = tz.TZDateTime.from(when, tz.local);
 
-    final tzTime = tz.TZDateTime.from(scheduledDate, tz.local);
+    final android =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    final canExact =
+        await (android?.canScheduleExactNotifications() ??
+            Future<bool>.value(false));
 
-    final exactAllowed = await ensureExactAlarmPerm(
-      flutterLocalNotificationsPlugin,
-    );
-
-    try {
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tzTime,
-        kLoudDetails,
-        androidScheduleMode:
-            exactAllowed
-                ? AndroidScheduleMode.alarmClock
-                : AndroidScheduleMode.inexact,
-      );
-      log('Notification scheduled for $scheduledDate');
-      final pending = await flnp.pendingNotificationRequests();
-      log(
-        'PENDING: ${pending.map((e) => {'id': e.id, 'title': e.title, 'time': e.title}).toList()}',
-      );
-      final android =
-          flnp
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
-      final enabled = await android?.areNotificationsEnabled() ?? true;
-      final channels = await android?.getNotificationChannels() ?? [];
-
-      log('enabled=$enabled');
-      log('channels=${channels.map((c) => {'id': c.id, 'imp': c.importance})}');
-      log('pending=${pending.map((e) => {'id': e.id, 'title': e.title})}');
-    } catch (e) {
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tzTime,
-        kLoudDetails,
-        androidScheduleMode:
-            exactAllowed
-                ? AndroidScheduleMode.alarmClock
-                : AndroidScheduleMode.inexact,
-      );
-    }
-  }
-
-  Future<void> showNotification({
-    required int id,
-    required String title,
-    required String body,
-  }) async {
-    const AndroidNotificationDetails
-    androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'booking_live', // Make sure this channel ID is the same as the one used in Firebase console
-      'Booking Reminders',
-      channelDescription: 'Reminders for your coworking space bookings.',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       title,
       body,
-      platformChannelSpecifics,
-      payload: 'item x', // Optional payload for handling taps
+      tzTime,
+      _kLoudDetails,
+      androidScheduleMode:
+          canExact!
+              ? AndroidScheduleMode.exactAllowWhileIdle
+              : AndroidScheduleMode.inexact,
+    );
+
+    final pending =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    log(
+      '$canExact PENDING: ${pending.map((e) => {'id': e.id, 'title': e.title}).toList()}',
     );
   }
 
-  Future<void> requestAndroidPermissions(
-    FlutterLocalNotificationsPlugin flnp,
-  ) async {
+  Future<void> requestAndroidPermissions() async {
     final android =
-        flnp
+        flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin
             >();
-
-    // Android 13+ notifications runtime permission
     await android?.requestNotificationsPermission();
 
-    // Exact alarms (Android 12+). This opens the “Alarms & reminders” special access screen.
-    final canExact = await android?.canScheduleExactNotifications() ?? false;
-    if (!canExact) {
-      await android?.requestExactAlarmsPermission();
+    bool? allowed =
+        await (android?.canScheduleExactNotifications() ??
+            Future<bool>.value(false));
+    if (!allowed!) {
+      await android?.requestExactAlarmsPermission(); // opens OS screen
     }
   }
 
-  Future<bool> ensureNotificationPerms(
-    FlutterLocalNotificationsPlugin flnp,
-  ) async {
-    final android =
-        flnp
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >();
-
-    // Android 13+ notifications permission
-    final notifGranted =
-        await android?.requestNotificationsPermission() ?? true;
-    return notifGranted;
-  }
-
-  /// Returns true iff OS allows exact alarms for your app.
-  Future<bool> ensureExactAlarmPerm(
-    FlutterLocalNotificationsPlugin flnp,
-  ) async {
+  Future<bool> ensureExactAlarmPerm() async {
     if (!Platform.isAndroid) return true;
     final android =
-        flnp
+        flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin
             >();
-
-    bool allowed = await android?.canScheduleExactNotifications() ?? false;
-    if (!allowed) {
-      // Try the plugin’s helper (opens the system screen).
+    bool? allowed =
+        await (android?.canScheduleExactNotifications() ??
+            Future<bool>.value(false));
+    if (!allowed!) {
       await android?.requestExactAlarmsPermission();
-      // Re-check
-      allowed = await android?.canScheduleExactNotifications() ?? false;
+      allowed =
+          await (android?.canScheduleExactNotifications() ??
+              Future<bool>.value(false));
     }
-    return allowed;
+    return allowed!;
   }
 
-  /// As a fallback, open the OS settings via an explicit intent.
-  /// Use this if requestExactAlarmsPermission() is a no-op on some OEMs.
-  final MethodChannel _platform = MethodChannel('app.exact_alarm.settings');
-
+  final MethodChannel _platform = const MethodChannel(
+    'app.exact_alarm.settings',
+  );
   Future<void> openExactAlarmSettings() async {
     if (!Platform.isAndroid) return;
     try {
@@ -198,75 +157,63 @@ class NotificationService extends GetxService {
     } catch (_) {}
   }
 
-  Future<void> testIn10Seconds(NotificationService svc) async {
-    final now = DateTime.now().add(const Duration(seconds: 10));
-    await svc.scheduleNotification(
-      id: 9990,
-      title: 'Test (10s)',
-      body: 'If you see this, scheduling works.',
-      scheduledDate: now,
-    );
-  }
-
-  Future<void> scheduleResilient({
-    required FlutterLocalNotificationsPlugin flnp,
-    required int id,
-    required String title,
-    required String body,
-    required DateTime when,
-  }) async {
-    // Nudge future to avoid “past” drop
-    if (!when.isAfter(DateTime.now().add(const Duration(seconds: 2)))) {
-      when = DateTime.now().add(const Duration(seconds: 10));
-    }
-
-    final tzWhen = tz.TZDateTime.from(when, tz.local);
-
-    // Check permissions & channel state
+  Future<void> scheduleExactIn20s() async {
     final android =
-        flnp
+        flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin
             >();
-    final enabled = await android?.areNotificationsEnabled() ?? true;
 
-    if (!enabled) {
-      // App notifications are OFF at the OS level — must be enabled by user
-      // Consider showing a dialog and deep-linking to notification settings.
+    bool? canExact =
+        await (android?.canScheduleExactNotifications() ?? Future.value(false));
+    if (!canExact!) {
+      await android
+          ?.requestExactAlarmsPermission(); // opens Alarms & reminders settings
+      canExact =
+          await (android?.canScheduleExactNotifications() ??
+              Future.value(false));
     }
 
-    // Try for exact alarms (Android 12+). If not allowed, we’ll fall back.
-    bool canExact = await android?.canScheduleExactNotifications() ?? false;
-    if (!canExact) {
+    if (!canExact!) {
       await android?.requestExactAlarmsPermission();
-      canExact = await android?.canScheduleExactNotifications() ?? false;
     }
 
-    try {
-      await flnp.zonedSchedule(
-        id,
-        title,
-        body,
-        tzWhen,
-        kLoudDetails,
-        androidScheduleMode:
-            canExact
-                ? AndroidScheduleMode.exactAllowWhileIdle
-                : AndroidScheduleMode.inexact,
-      );
-    } catch (e) {
-      // Fallback to inexact if device/OEM still rejects exact
-      await flnp.zonedSchedule(
-        id,
-        title,
-        body,
-        tzWhen,
-        kLoudDetails,
-        androidScheduleMode:
-            canExact
-                ? AndroidScheduleMode.exactAllowWhileIdle
-                : AndroidScheduleMode.inexact,
-      );
-    }
+    final when = DateTime.now().add(const Duration(seconds: 20));
+    final tzWhen = tz.TZDateTime.from(when, tz.local);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      4242,
+      'Exact test',
+      canExact
+          ? 'Exact alarm: should fire ~20s from now'
+          : 'Inexact alarm: OS may delay this',
+      tzWhen,
+      _kLoudDetails,
+      androidScheduleMode:
+          canExact
+              ? AndroidScheduleMode.exact
+              : AndroidScheduleMode.inexactAllowWhileIdle,
+    );
+
+    // Optional debug
+    final pending =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    logTimeDiag(when);
+    log(
+      '$canExact pending=${pending.map((e) => {'id': e.id, 'title': e.title}).toList()}',
+    );
+  }
+
+  void logTimeDiag(DateTime wallClockLocal) {
+    final nowWall = DateTime.now();
+    final nowTz = tz.TZDateTime.now(tz.local);
+    final schedTz = tz.TZDateTime.from(wallClockLocal, tz.local);
+    final delta = wallClockLocal.difference(nowWall).inSeconds;
+
+    log('[time] tz.local=${tz.local.name}');
+    log('[time] now(wall)=$nowWall now(tz)=$nowTz');
+    log(
+      '[time] requested(wall)=$wallClockLocal → scheduled(tz)=$schedTz (Δ=${delta}s)',
+    );
   }
 }

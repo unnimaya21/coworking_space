@@ -1,4 +1,3 @@
-// lib/presentation/home/controllers/home_controller.dart
 import 'dart:developer';
 
 import 'package:coworking_space_app/app/modules/filter/filter_controller.dart';
@@ -20,7 +19,6 @@ class HomeController extends GetxController {
   var filteredBranches = <CoworkingBranch>[].obs;
   var searchQuery = ''.obs;
 
-  // New variables to store filter state
   var selectedPrice = Rxn<RangeValues>();
 
   @override
@@ -37,7 +35,6 @@ class HomeController extends GetxController {
       filteredBranches.assignAll(branches);
       log('Fetched branches: ${branches.length}');
     } catch (e) {
-      // Handle error, e.g., show a snackbar
       Get.snackbar('Error', 'Failed to load data: $e');
     } finally {
       isLoading.value = false;
@@ -105,7 +102,6 @@ class HomeController extends GetxController {
 
   void selectDate(DateTime date) {
     selectedDate.value = date;
-    // You could fetch available time slots for the selected date here.
   }
 
   void selectTime(String time) {
@@ -156,13 +152,12 @@ class HomeController extends GetxController {
         const Duration(minutes: 30),
       ), // 30 minutes before booking
     );
-    // Show a confirmation message
-    Get.snackbar(
-      'Booking Confirmed!',
-      'You have successfully booked a space at ${_branch.name} for ${selectedTime.value} on ${selectedDate.value.toLocal().toString().split(' ')[0]}.',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
+
+    notificationService.showNotification(
+      id: 2001,
+      title: 'Booking Confirmed!',
+      body:
+          'You have successfully booked a space at ${_branch.name} for ${selectedTime.value} on ${selectedDate.value.toLocal().toString().split(' ')[0]}.',
     );
 
     log('Stored Bookings: ${_storage.read(StorageKeys.bookingsKey)}');

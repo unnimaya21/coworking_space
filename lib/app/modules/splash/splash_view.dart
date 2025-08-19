@@ -25,17 +25,9 @@ class SplashView extends GetView<SplashController> {
             const SizedBox(height: 24),
             Text(
               'Coworking Space',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFFF4444),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Discover Your Signature Scent',
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
