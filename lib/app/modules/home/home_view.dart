@@ -1,3 +1,4 @@
+import 'package:coworking_space_app/app/modules/home/widgets/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coworking_space_app/app/modules/filter/filter_view.dart';
@@ -16,7 +17,7 @@ class HomeView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Coworking Spaces'),
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
@@ -30,6 +31,14 @@ class HomeView extends StatelessWidget {
               Get.to(() => const MyBookingsScreen());
             },
           ),
+          GestureDetector(
+            onTap: () {
+              // Navigate to the MapView and pass the coordinates
+              Get.to(() => MapView());
+            },
+            child: const Icon(Icons.map),
+          ),
+          SizedBox(width: 16),
         ],
       ),
       body: Column(
@@ -64,7 +73,8 @@ class HomeView extends StatelessWidget {
             return Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                childAspectRatio: 0.8,
+                childAspectRatio: 0.7,
+                shrinkWrap: true,
                 children: [
                   for (var branch in controller.filteredBranches)
                     BranchCard(branch: branch),

@@ -1,9 +1,9 @@
 [
     {
         "id": "branch_1",
-        "name": "Creative Hub",
-        "location": "Downtown, New York",
-        "city": "New York",
+        "name": "InnerSpace Ayyappankavu",
+        "location": "SRM Road, near NIRMALA SISU BHAVAN, Ayyappankavu, Ernakulam, Kerala 682018",
+        "city": "Ernakulam",
         "pricePerHour": 25.0,
         "description": "A vibrant and collaborative workspace.",
         "images": [
@@ -23,15 +23,15 @@
             "tue": "9:00 AM - 6:00 PM"
         },
         "coordinates": {
-            "latitude": 40.7128,
-            "longitude": -74.0060
+            "latitude": 9.995260518608092,
+            "longitude": 76.28678261144711
         }
     },
     {
         "id": "branch_2",
-        "name": "Tech Space",
-        "location": "Silicon Valley",
-        "city": "San Francisco",
+        "name": "InnerSpace Kakkanad",
+        "location": " B, 17/1170, Trinity World Rd, Chittethukara, Kakkanad, Kochi, Kerala 682037",
+        "city": "Kakkanad",
         "pricePerHour": 35.0,
         "description": "Perfect for tech startups and freelancers.",
         "images": [
@@ -51,15 +51,15 @@
             "tue": "8:00 AM - 8:00 PM"
         },
         "coordinates": {
-            "latitude": 37.7749,
-            "longitude": -122.4194
+            "latitude": 10.000212077661423,
+            "longitude": 76.3509026797193
         }
     },
     {
         "id": "branch_3",
-        "name": "Design Studio",
-        "location": "Midtown, New York",
-        "city": "New York",
+        "name": "InnerSpace Edappally",
+        "location": "Residents Ln, Changampuzha Park, Edappally, Kochi, Ernakulam, Kerala 682024",
+        "city": "Edappally",
         "pricePerHour": 30.0,
         "description": "A creative space for designers and artists.",
         "images": [
@@ -79,15 +79,15 @@
             "tue": "9:00 AM - 6:00 PM"
         },
         "coordinates": {
-            "latitude": 40.7128,
-            "longitude": -74.0060
+            "latitude": 10.035782362625648,
+            "longitude": 76.3322494583892
         }
     },
     {
         "id": "branch_4",
-        "name": "Innovation Lab",
-        "location": "Uptown, New York",
-        "city": "New York",
+        "name": "InnerSpace Thrikkakara",
+        "location": "UB Business Centre, near Aditya Hospital, Thrikkakara, Ernakulam, Kochi, Kerala 682021",
+        "city": "Thrikkakara",
         "pricePerHour": 40.0,
         "description": "A hub for innovative thinkers and creators.",
         "images": [
@@ -107,8 +107,8 @@
             "tue": "9:00 AM - 6:00 PM"
         },
         "coordinates": {
-            "latitude": 40.7128,
-            "longitude": -74.0060
+            "latitude": 10.034314514073648,
+            "longitude": 76.33242142574733
         }
     }
 ]

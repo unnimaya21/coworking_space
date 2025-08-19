@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       initialRoute: AppRoutes.LOGIN,
       getPages: AppPages.routes,
-
+      navigatorKey: Get.key,
       transitionDuration: const Duration(milliseconds: 500),
       debugShowCheckedModeBanner: false,
     );

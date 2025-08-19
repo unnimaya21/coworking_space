@@ -58,8 +58,8 @@ class FilterScreen extends StatelessWidget {
                 max: 100,
                 divisions: 10,
                 labels: RangeLabels(
-                  '\$${controller.selectedPrice.value.start.round()}',
-                  '\$${controller.selectedPrice.value.end.round()}',
+                  '${controller.selectedPrice.value.start.round()} Rs',
+                  '${controller.selectedPrice.value.end.round()} Rs',
                 ),
                 onChanged: (RangeValues values) {
                   controller.setPriceRange(values);
@@ -68,7 +68,7 @@ class FilterScreen extends StatelessWidget {
             ),
             Obx(
               () => Text(
-                'Price Range: \$${controller.selectedPrice.value.start.round()} - \$${controller.selectedPrice.value.end.round()}',
+                'Price Range: Rs ${controller.selectedPrice.value.start.round()} - ${controller.selectedPrice.value.end.round()}',
               ),
             ),
           ],
