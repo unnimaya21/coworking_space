@@ -1,5 +1,4 @@
-import 'package:dartz/dartz.dart';
-import '../entities/home_data_entity.dart';
+import 'package:coworking_space_app/app/domain/entities/branches.dart';
 import '../repositories/home_repository.dart';
 
 class GetHomeDataUseCase {
@@ -7,8 +6,8 @@ class GetHomeDataUseCase {
 
   GetHomeDataUseCase({required this.repository});
 
-  Future<Either<String, HomeDataEntity>> call() async {
-    return await repository.getHomeData();
+  Future<List<CoworkingBranch>> call() async {
+    return await repository.getBranches();
   }
 
   //The call() method in your GetHomeDataUseCase is an operator overloading feature

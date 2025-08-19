@@ -1,4 +1,4 @@
-import 'package:perfume_app/app/data/models/home_data_model.dart';
+import 'package:coworking_space_app/app/data/models/home_data_model.dart';
 
 class HomeDataEntity {
   final int? errorCode;

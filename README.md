@@ -1,4 +1,4 @@
-# perfume_app
+# coworking_space_app
 
 A new Flutter project.
 

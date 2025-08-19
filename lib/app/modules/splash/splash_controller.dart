@@ -1,31 +1,27 @@
 import 'dart:developer';
 
+import 'package:coworking_space_app/app/core/utils/storage_keys.dart';
 import 'package:get/get.dart';
-import 'package:perfume_app/app/data/providers/api_provider.dart';
-import 'package:perfume_app/app/data/repositories/auth_repository_impl.dart';
-import '../../domain/repositories/auth_repository.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../routes/app_routes.dart';
 
 class SplashController extends GetxController {
-  final AuthRepository _authRepository = Get.put(
-    AuthRepositoryImpl(apiProvider: ApiProvider()),
-  );
-
   @override
   void onInit() {
     super.onInit();
-    log('User is logged in: ');
     _checkAuthStatus();
   }
 
   Future<void> _checkAuthStatus() async {
+    GetStorage storage = GetStorage();
     await Future.delayed(const Duration(seconds: 1));
 
-    final isLoggedIn = await _authRepository.isLoggedIn();
+    final List<dynamic> currentBookings =
+        storage.read<List<dynamic>>(StorageKeys.bookingsKey) ?? [];
 
-    log('User is logged in: $isLoggedIn');
+    log('User bookings: $currentBookings');
 
-    if (isLoggedIn) {
+    if (currentBookings.isNotEmpty) {
       Get.offAllNamed(AppRoutes.HOME);
     } else {
       Get.offAllNamed(AppRoutes.LOGIN);

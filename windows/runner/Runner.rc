@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "perfume_app" "\0"
+            VALUE "FileDescription", "coworking_space_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "perfume_app" "\0"
+            VALUE "InternalName", "coworking_space_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "perfume_app.exe" "\0"
-            VALUE "ProductName", "perfume_app" "\0"
+            VALUE "OriginalFilename", "coworking_space_app.exe" "\0"
+            VALUE "ProductName", "coworking_space_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

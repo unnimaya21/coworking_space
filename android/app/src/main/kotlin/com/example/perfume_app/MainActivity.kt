@@ -1,4 +1,4 @@
-package com.example.perfume_app
+package com.example.coworking_space_app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -3,4 +3,5 @@ class StorageKeys {
   static const String userData = 'user_data';
   static const String isFirstTime = 'is_first_time';
   static const String products = 'products';
+  static const String bookingsKey = 'bookings';
 }
