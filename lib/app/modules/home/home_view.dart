@@ -1,309 +1,81 @@
+// lib/presentation/home/views/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:perfume_app/app/domain/entities/home_data_entity.dart';
-import 'package:perfume_app/app/modules/home/widgets/banner_grid_widget.dart';
-import 'package:perfume_app/app/modules/home/widgets/brands_section_widget.dart';
-import 'package:perfume_app/app/modules/home/widgets/categories_section_widget.dart';
-import 'package:perfume_app/app/modules/home/widgets/image_carousel.dart';
-import 'package:perfume_app/app/modules/home/widgets/new_arrivals_widget.dart';
-import 'package:perfume_app/app/modules/home/widgets/request_quote_widget.dart';
-import 'package:perfume_app/app/modules/widgets/text_widget.dart';
-import 'package:shimmer/shimmer.dart';
-import 'home_controller.dart';
-import 'widgets/search_bar_widget.dart';
+import 'package:coworking_space_app/app/modules/filter/filter_view.dart';
+import 'package:coworking_space_app/app/modules/home/home_controller.dart';
+import 'package:coworking_space_app/app/modules/home/widgets/branch_card.dart';
+import 'package:coworking_space_app/app/modules/my_bookings/my_bookings.dart';
 
-class HomeView extends GetView<HomeController> {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Inject the HomeController. Get.put() initializes the controller
+    // and makes it available throughout the widget tree.
+    final controller = Get.put(HomeController());
+
     return Scaffold(
-      body: SafeArea(
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            return _buildLoadingState();
-          }
-          final List<HomeFieldEntity> homeFields =
-              controller.homeData.homeFields ?? [];
+      appBar: AppBar(
+        title: const Text('Coworking Spaces'),
+        elevation: 0,
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              Get.to(() => const FilterScreen());
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.book_online),
+            onPressed: () {
+              Get.to(() => const MyBookingsScreen());
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              onChanged: (value) => controller.searchBranches(value),
+              decoration: const InputDecoration(
+                labelText: 'Search by name, city, or location',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+              ),
+            ),
+          ),
+          // Obx automatically rebuilds when the reactive variables change
+          Obx(() {
+            if (controller.isLoading.value) {
+              return const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
 
-          return RefreshIndicator(
-            onRefresh: controller.loadHomeData,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (controller.filteredBranches.isEmpty) {
+              return const Expanded(
+                child: Center(child: Text('No branches found.')),
+              );
+            }
+
+            return Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
                 children: [
-                  _buildHeader(),
-                  const SizedBox(height: 20),
-                  SearchBarWidget(
-                    onChanged: controller.onSearchChanged,
-                    onScanPressed: controller.onScanPressed,
-                  ),
-                  const SizedBox(height: 24),
-                  if (homeFields.isNotEmpty)
-                    PerfumeBanner(
-                      items:
-                          homeFields
-                              .firstWhere((field) => field.type == 'carousel')
-                              .carouselItems ??
-                          [],
-                    ),
-
-                  const SizedBox(height: 32),
-                  if (homeFields.isNotEmpty)
-                    BrandsSectionWidget(
-                      brands:
-                          homeFields
-                              .firstWhere((field) => field.type == 'brands')
-                              .brands ??
-                          [],
-                      onBrandPressed: (brand) {
-                        controller.onBrandPressed(brand);
-                        return null;
-                      },
-                      onViewAll: controller.onViewAllBrands,
-                    ),
-                  const SizedBox(height: 32),
-                  if (homeFields.isNotEmpty)
-                    CategoriesSectionWidget(
-                      categories:
-                          homeFields
-                              .firstWhere((field) => field.type == 'category')
-                              .categories ??
-                          [],
-                      onCategoryPressed: controller.onCategoryPressed,
-                      onViewAll: controller.onViewAllCategories,
-                    ),
-
-                  RequestQuoteWidget(),
-                  if (homeFields.isNotEmpty)
-                    NewArrivalsWidget(
-                      title: 'New Arrivals',
-                      newArrivals:
-                          homeFields
-                              .firstWhere((field) => field.type == 'collection')
-                              .products ??
-                          [],
-                      onProductPressed: (product) {
-                        controller.onProductPressed(product);
-                      },
-                      onViewAll: () {
-                        controller.onViewAllNewArrivals();
-                      },
-                    ),
-                  if (homeFields.isNotEmpty)
-                    BannerGridWidget(
-                      items:
-                          homeFields
-                              .firstWhere(
-                                (field) => field.type == 'banner-grid',
-                              )
-                              .bannerItems ??
-                          [],
-                      onShopNow: () {},
-                    ),
-                  if (homeFields.isNotEmpty)
-                    NewArrivalsWidget(
-                      title: 'Latest Products',
-                      newArrivals:
-                          homeFields
-                              .firstWhere((field) => field.type == 'collection')
-                              .products ??
-                          [],
-                      onProductPressed: (product) {
-                        controller.onProductPressed(product);
-                      },
-                      onViewAll: () {
-                        controller.onViewAllNewArrivals();
-                      },
-                    ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      'assets/images/banner2.png',
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      height: 180,
-                    ),
-                  ),
-                  if (homeFields.isNotEmpty)
-                    NewArrivalsWidget(
-                      title: 'New Arrivals',
-                      newArrivals:
-                          homeFields
-                              .firstWhere((field) => field.type == 'collection')
-                              .products ??
-                          [],
-                      onProductPressed: (product) {
-                        controller.onProductPressed(product);
-                      },
-                      onViewAll: () {
-                        controller.onViewAllNewArrivals();
-                      },
-                    ),
+                  for (var branch in controller.filteredBranches)
+                    BranchCard(branch: branch),
                 ],
               ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextWidget(
-              text: 'Welcome!',
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
-        ),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.notifications_outlined,
-            color: Colors.black54,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 200,
-              height: 24,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 50,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                Container(
-                  width: 150,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 100,
-              child: ListView.builder(
-                itemCount: 3,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 100,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 50,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                Container(
-                  width: 150,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 100,
-              child: ListView.builder(
-                itemCount: 3,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 100,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+            );
+          }),
+        ],
       ),
     );
   }

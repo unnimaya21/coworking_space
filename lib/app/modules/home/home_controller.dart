@@ -1,164 +1,170 @@
+// lib/presentation/home/controllers/home_controller.dart
 import 'dart:developer';
 
+import 'package:coworking_space_app/app/modules/filter/filter_controller.dart';
+import 'package:coworking_space_app/services/notification_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
 import 'package:get_storage/get_storage.dart';
-import 'package:perfume_app/app/core/utils/storage_keys.dart';
-import '../../domain/entities/home_data_entity.dart';
-import '../../domain/usecases/get_home_data_usecase.dart';
+import 'package:coworking_space_app/app/core/utils/storage_keys.dart';
+import 'package:coworking_space_app/app/domain/entities/branches.dart';
+import 'package:coworking_space_app/app/domain/usecases/get_home_data_usecase.dart';
 
 class HomeController extends GetxController {
   final GetHomeDataUseCase _getHomeDataUseCase = Get.find();
 
-  final RxBool isLoading = true.obs;
-  HomeDataEntity homeData = HomeDataEntity();
-  final RxString searchQuery = ''.obs;
-  var products = <ProductEntity>[].obs;
-  final GetStorage _storage = GetStorage();
+  var isLoading = true.obs;
+  var allBranches = <CoworkingBranch>[].obs;
+  var filteredBranches = <CoworkingBranch>[].obs;
+  var searchQuery = ''.obs;
+
+  // New variables to store filter state
+  var selectedPrice = Rxn<RangeValues>();
 
   @override
   void onInit() {
     super.onInit();
-    loadHomeData();
-    _loadProductsFromStorage();
+    fetchBranches();
   }
 
-  Future<void> loadHomeData() async {
-    isLoading.value = true;
-
-    final result = await _getHomeDataUseCase.call();
-
-    if (result.isLeft()) {
-    } else {
-      homeData = result.getOrElse(() => HomeDataEntity());
-      update();
+  void fetchBranches() async {
+    try {
+      isLoading.value = true;
+      final branches = await _getHomeDataUseCase.call();
+      allBranches.assignAll(branches);
+      filteredBranches.assignAll(branches);
+      log('Fetched branches: ${branches.length}');
+    } catch (e) {
+      // Handle error, e.g., show a snackbar
+      Get.snackbar('Error', 'Failed to load data: $e');
+    } finally {
+      isLoading.value = false;
     }
-
-    log('Home data loaded: $homeData');
-
-    isLoading.value = false;
   }
 
-  void onSearchChanged(String query) {
-    searchQuery.value = query;
+  void searchBranches(String query) {
+    searchQuery.value = query.toLowerCase();
+    log('Search query updated: $query');
+    applyFilters();
   }
 
-  void onScanPressed() {
-    Get.snackbar('Scan', 'Scan functionality will be implemented');
+  void applyFilters() {
+    final filterController = Get.put(FilterController());
+    filteredBranches.assignAll(
+      allBranches.where((branch) {
+        final query = searchQuery.value;
+        final city = filterController.selectedCity.value;
+        final priceRange = filterController.selectedPrice.value;
+
+        // Check for search query match
+        final bool matchesSearch =
+            query.isEmpty ||
+            branch.name.toLowerCase().contains(query) ||
+            branch.location.toLowerCase().contains(query) ||
+            branch.city.toLowerCase().contains(query);
+
+        // Check for city filter match
+        final bool matchesCity = city == null || branch.city == city;
+
+        // Check for price filter match
+        final bool matchesPrice =
+            (branch.pricePerHour >= priceRange.start &&
+                branch.pricePerHour <= priceRange.end);
+
+        // A branch must match all criteria
+        return matchesSearch && matchesCity && matchesPrice;
+      }).toList(),
+    );
   }
 
-  void onBrandPressed(BrandEntity brand) {
-    Get.snackbar('Brand', 'Selected: ${brand.name}');
+  final Rx<DateTime> selectedDate = DateTime.now().obs;
+  final Rx<String> selectedTime = ''.obs;
+
+  late CoworkingBranch _branch;
+  final GetStorage _storage = GetStorage();
+
+  final List<String> availableTimeSlots = [
+    '09:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '01:00 PM',
+    '01:40 PM',
+    '02:00 PM',
+    '03:00 PM',
+    '04:00 PM',
+    '05:00 PM',
+    '06:00 PM',
+  ];
+
+  void setBranch(CoworkingBranch branch) {
+    _branch = branch;
   }
 
-  void onCategoryPressed(CategoryEntity category) {
-    Get.snackbar('Category', 'Selected: ${category.name}');
+  void selectDate(DateTime date) {
+    selectedDate.value = date;
+    // You could fetch available time slots for the selected date here.
   }
 
-  void onViewAllBrands() {
-    Get.snackbar('Brands', 'View all brands');
+  void selectTime(String time) {
+    selectedTime.value = time;
   }
 
-  void onViewAllCategories() {
-    Get.snackbar('Categories', 'View all categories');
-  }
-
-  void onProductPressed(ProductEntity product) {
-    final GetStorage storage = GetStorage();
-
-    // Read the existing list of maps from storage
-    final List<dynamic> savedItems = storage.read(StorageKeys.products) ?? [];
-
-    // Convert the list of maps back to a list of ProductEntity
-    final List<ProductEntity> productsList =
-        savedItems
-            .map((item) => ProductEntity.fromJson(item as Map<String, dynamic>))
-            .toList();
-
-    // Check if the product already exists
-    if (productsList.any((item) => item.id == product.id)) {
-      // If it exists, find it and update the cart count
-      final existingProduct = productsList.firstWhere(
-        (item) => item.id == product.id,
+  void bookSpace() {
+    var notificationService = NotificationService();
+    if (selectedTime.value.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please select a date and a time slot.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
-      existingProduct.cartCount = (existingProduct.cartCount ?? 0) + 1;
-    } else {
-      // If it doesn't exist, add the new product
-      productsList.add(product);
+      return;
     }
 
-    // Convert the updated list of ProductEntity back to a list of maps
-    final List<Map<String, dynamic>> itemsToSave =
-        productsList.map((item) => item.toJson()).toList();
+    // Create the booking details map
+    final bookingDetails = {
+      'branch': _branch.name,
+      'date': selectedDate.value.toLocal().toString().split(' ')[0],
+      'time': selectedTime.value,
+      'price': _branch.pricePerHour,
+    };
 
-    // Write the list of maps to GetStorage
-    storage.write(StorageKeys.products, itemsToSave);
-    log('items: $itemsToSave');
-  }
+    // Get the current list of bookings from storage
+    // If the key doesn't exist, it returns an empty list
+    final List<dynamic> currentBookings =
+        _storage.read<List<dynamic>>(StorageKeys.bookingsKey) ?? [];
 
-  void onViewAllNewArrivals() {}
+    // Add the new booking to the list
+    currentBookings.add(bookingDetails);
 
-  void _loadProductsFromStorage() {
-    final List<dynamic> savedItems = _storage.read(StorageKeys.products) ?? [];
-    products.value =
-        savedItems
-            .map((item) => ProductEntity.fromJson(item as Map<String, dynamic>))
-            .toList();
-  }
-
-  void incrementCartCount(ProductEntity product) {
-    // Find the product in the reactive list
-    final existingProductIndex = products.indexWhere(
-      (item) => item.id == product.id,
+    // Save the updated list back to storage
+    _storage.write(StorageKeys.bookingsKey, currentBookings);
+    DateFormat formatter = DateFormat('yyyy-MM-dd h:mm a');
+    final bookingDateTime = formatter.parse(
+      '${bookingDetails['date']} ${bookingDetails['time']}',
+    );
+    notificationService.scheduleNotification(
+      id: currentBookings.length, // Unique ID for each notification
+      title: 'Booking Reminder',
+      body:
+          'Your booking at ${bookingDetails['branch']} is scheduled for today at ${bookingDetails['time']}.',
+      scheduledDate: bookingDateTime.subtract(
+        const Duration(minutes: 30),
+      ), // 30 minutes before booking
+    );
+    // Show a confirmation message
+    Get.snackbar(
+      'Booking Confirmed!',
+      'You have successfully booked a space at ${_branch.name} for ${selectedTime.value} on ${selectedDate.value.toLocal().toString().split(' ')[0]}.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
     );
 
-    if (existingProductIndex != -1) {
-      // If the product is in the list, increment its count
-      final updatedProduct = products[existingProductIndex];
-      updatedProduct.cartCount = (updatedProduct.cartCount ?? 0) + 1;
-      products[existingProductIndex] = updatedProduct;
-    } else {
-      // If it's a new product, set count to 1 and add it
-      product.cartCount = 1;
-      products.add(product);
-    }
-    _saveToStorage();
-  }
-
-  void decrementCartCount(ProductEntity product) {
-    final existingProductIndex = products.indexWhere(
-      (item) => item.id == product.id,
-    );
-    if (existingProductIndex != -1) {
-      final updatedProduct = products[existingProductIndex];
-      if ((updatedProduct.cartCount ?? 0) > 1) {
-        updatedProduct.cartCount = updatedProduct.cartCount! - 1;
-        products[existingProductIndex] = updatedProduct;
-      } else {
-        // If the count is 1, remove the product from the list
-        products.removeAt(existingProductIndex);
-      }
-      _saveToStorage();
-    }
-  }
-
-  void toggleWishlist(ProductEntity product) {
-    final existingProductIndex = products.indexWhere(
-      (item) => item.id == product.id,
-    );
-    if (existingProductIndex != -1) {
-      final updatedProduct = products[existingProductIndex];
-      updatedProduct.wishlisted = !(updatedProduct.wishlisted ?? false);
-      products[existingProductIndex] = updatedProduct;
-    } else {
-      product.wishlisted = true;
-      products.add(product);
-    }
-    _saveToStorage();
-  }
-
-  void _saveToStorage() {
-    final List<Map<String, dynamic>> itemsToSave =
-        products.map((item) => item.toJson()).toList();
-    _storage.write(StorageKeys.products, itemsToSave);
+    log('Stored Bookings: ${_storage.read(StorageKeys.bookingsKey)}');
   }
 }

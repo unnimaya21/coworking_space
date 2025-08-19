@@ -1,0 +1,114 @@
+[
+    {
+        "id": "branch_1",
+        "name": "Creative Hub",
+        "location": "Downtown, New York",
+        "city": "New York",
+        "pricePerHour": 25.0,
+        "description": "A vibrant and collaborative workspace.",
+        "images": [
+            "assets/images/cw1.jpg",
+            "assets/images/c1.jpg",
+            "assets/images/c2.jpg",
+            "assets/images/c3.jpg",
+            "assets/images/c4.jpg"
+        ],
+        "amenities": [
+            "Wi-Fi",
+            "Coffee Bar",
+            "Meeting Rooms"
+        ],
+        "operatingHours": {
+            "mon": "9:00 AM - 6:00 PM",
+            "tue": "9:00 AM - 6:00 PM"
+        },
+        "coordinates": {
+            "latitude": 40.7128,
+            "longitude": -74.0060
+        }
+    },
+    {
+        "id": "branch_2",
+        "name": "Tech Space",
+        "location": "Silicon Valley",
+        "city": "San Francisco",
+        "pricePerHour": 35.0,
+        "description": "Perfect for tech startups and freelancers.",
+        "images": [
+            "assets/images/cw2.jpg",
+            "assets/images/c1.jpg",
+            "assets/images/c2.jpg",
+            "assets/images/c3.jpg",
+            "assets/images/c4.jpg"
+        ],
+        "amenities": [
+            "High-Speed Internet",
+            "Printers",
+            "Lounge Area"
+        ],
+        "operatingHours": {
+            "mon": "8:00 AM - 8:00 PM",
+            "tue": "8:00 AM - 8:00 PM"
+        },
+        "coordinates": {
+            "latitude": 37.7749,
+            "longitude": -122.4194
+        }
+    },
+    {
+        "id": "branch_3",
+        "name": "Design Studio",
+        "location": "Midtown, New York",
+        "city": "New York",
+        "pricePerHour": 30.0,
+        "description": "A creative space for designers and artists.",
+        "images": [
+            "assets/images/cw3.jpg",
+            "assets/images/c1.jpg",
+            "assets/images/c2.jpg",
+            "assets/images/c3.jpg",
+            "assets/images/c4.jpg"
+        ],
+        "amenities": [
+            "Wi-Fi",
+            "Coffee Bar",
+            "Meeting Rooms"
+        ],
+        "operatingHours": {
+            "mon": "9:00 AM - 6:00 PM",
+            "tue": "9:00 AM - 6:00 PM"
+        },
+        "coordinates": {
+            "latitude": 40.7128,
+            "longitude": -74.0060
+        }
+    },
+    {
+        "id": "branch_4",
+        "name": "Innovation Lab",
+        "location": "Uptown, New York",
+        "city": "New York",
+        "pricePerHour": 40.0,
+        "description": "A hub for innovative thinkers and creators.",
+        "images": [
+            "assets/images/cw4.jpg",
+            "assets/images/c1.jpg",
+            "assets/images/c2.jpg",
+            "assets/images/c3.jpg",
+            "assets/images/c4.jpg"
+        ],
+        "amenities": [
+            "Wi-Fi",
+            "Coffee Bar",
+            "Meeting Rooms"
+        ],
+        "operatingHours": {
+            "mon": "9:00 AM - 6:00 PM",
+            "tue": "9:00 AM - 6:00 PM"
+        },
+        "coordinates": {
+            "latitude": 40.7128,
+            "longitude": -74.0060
+        }
+    }
+]

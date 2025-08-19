@@ -1,10 +1,10 @@
-import 'package:dartz/dartz.dart';
+import 'dart:convert';
 
-import '../../domain/entities/home_data_entity.dart';
+import 'package:flutter/services.dart';
+import 'package:coworking_space_app/app/domain/entities/branches.dart';
+
 import '../../domain/repositories/home_repository.dart';
-import '../../core/constants/api_constants.dart';
 import '../providers/api_provider.dart';
-import '../models/home_data_model.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final ApiProvider apiProvider;
@@ -12,23 +12,13 @@ class HomeRepositoryImpl implements HomeRepository {
   HomeRepositoryImpl({required this.apiProvider});
 
   @override
-  Future<Either<String, HomeDataEntity>> getHomeData() async {
-    try {
-      final response = await apiProvider.get(ApiConstants.homeEndpoint);
-
-      if (response.statusCode == 200) {
-        final homeDataModel = HomeDataModel.fromJson(
-          response.data['data'] ?? response.data,
-        );
-
-        final homeDataEntity = HomeDataEntity.fromModel(homeDataModel);
-
-        return Right(homeDataEntity);
-      } else {
-        return Left(response.data['message'] ?? 'Failed to load home data');
-      }
-    } catch (e) {
-      return Left('Network error: ${e.toString()}');
-    }
+  Future<List<CoworkingBranch>> getBranches() async {
+    // Simulate a network delay
+    await Future.delayed(const Duration(seconds: 1));
+    final String response = await rootBundle.loadString(
+      'assets/json/branches.json',
+    );
+    final List<dynamic> data = json.decode(response);
+    return data.map((json) => CoworkingBranch.fromJson(json)).toList();
   }
 }

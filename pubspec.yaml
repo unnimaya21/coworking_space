@@ -1,4 +1,4 @@
-name: perfume_app
+name: coworking_space_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -42,6 +42,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   carousel_slider: ^5.1.1
   hexcolor: ^3.0.1
+  flutter_map: ^8.2.1
+  firebase_core: ^4.0.0
+  firebase_messaging: ^16.0.0
+  flutter_local_notifications: ^19.4.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +74,8 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/json/
+    - assets/logo/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

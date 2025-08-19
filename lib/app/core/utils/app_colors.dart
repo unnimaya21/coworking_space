@@ -8,4 +8,5 @@ class AppColors {
   static Color prodTitle = HexColor('#070707');
   static Color prodPrice = HexColor('#939393');
   static Color borderColor = HexColor('#E8E8E8');
+  static Color secondaryColor = Colors.teal;
 }

@@ -1,6 +1,6 @@
 // user_entity.dart
 
-import 'package:perfume_app/app/data/models/user_model.dart';
+import 'package:coworking_space_app/app/data/models/user_model.dart';
 
 class UserEntity {
   final int? errorCode;

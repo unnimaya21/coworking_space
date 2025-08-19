@@ -1,6 +1,5 @@
-import 'package:dartz/dartz.dart';
-import '../entities/home_data_entity.dart';
+import 'package:coworking_space_app/app/domain/entities/branches.dart';
 
 abstract class HomeRepository {
-  Future<Either<String, HomeDataEntity>> getHomeData();
+  Future<List<CoworkingBranch>> getBranches();
 }

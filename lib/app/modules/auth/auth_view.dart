@@ -1,6 +1,7 @@
+import 'package:coworking_space_app/app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:perfume_app/app/modules/widgets/text_widget.dart';
+import 'package:coworking_space_app/app/modules/widgets/text_widget.dart';
 import 'auth_controller.dart';
 
 class AuthView extends GetView<AuthController> {
@@ -15,40 +16,42 @@ class AuthView extends GetView<AuthController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 width: 100,
                 height: 100,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF4444),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.local_florist,
-                  size: 50,
-                  color: Colors.white,
+
+                child: Image.asset(
+                  'assets/logo/logo.png',
+                  width: 50,
+                  height: 50,
                 ),
               ),
               const SizedBox(height: 32),
               TextWidget(
-                text: 'Welcome to Perfume',
+                text: 'Welcome to Coworking Space',
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
-              TextWidget(
-                text: 'Discover and explore the world of fragrances',
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-              ),
+
               const SizedBox(height: 48),
               Obx(
                 () => SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed:
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
                         controller.isLoading.value
-                            ? null
-                            : controller.performAnonymousLogin,
+                            ? Colors.grey
+                            : AppColors.secondaryColor,
+                      ),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                    onPressed:
+                        controller.isLoading.value ? null : controller.goToHome,
                     child:
                         controller.isLoading.value
                             ? const SizedBox(

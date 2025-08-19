@@ -1,4 +1,8 @@
+import 'package:coworking_space_app/app/modules/filter/filter_bindings.dart';
 import 'package:get/get.dart';
+import 'package:coworking_space_app/app/modules/filter/filter_view.dart';
+import 'package:coworking_space_app/app/modules/my_bookings/my_bookings.dart';
+import 'package:coworking_space_app/app/modules/my_bookings/my_bookings_bindings.dart';
 
 import '../modules/splash/splash_binding.dart';
 import '../modules/splash/splash_view.dart';
@@ -26,6 +30,16 @@ class AppPages {
       name: AppRoutes.HOME,
       page: () => HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.MY_BOOKINGS,
+      page: () => const MyBookingsScreen(),
+      binding: MyBookingsBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.FILTER,
+      page: () => const FilterScreen(),
+      binding: FilterBindings(),
     ),
   ];
 }
