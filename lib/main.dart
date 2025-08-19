@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Coworking Space App',
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.LOGIN,
+      initialRoute: AppRoutes.HOME,
       getPages: AppPages.routes,
       navigatorKey: Get.key,
       transitionDuration: const Duration(milliseconds: 500),

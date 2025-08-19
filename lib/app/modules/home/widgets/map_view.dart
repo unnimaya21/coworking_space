@@ -41,7 +41,6 @@ class MapView extends StatelessWidget {
         child: FlutterMap(
           mapController: mapController,
           options: MapOptions(
-            backgroundColor: Colors.black,
             initialCenter: initialCenter,
             initialZoom: 14,
             interactionOptions: const InteractionOptions(),

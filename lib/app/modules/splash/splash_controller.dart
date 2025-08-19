@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:coworking_space_app/app/core/utils/storage_keys.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../routes/app_routes.dart';
 
 class SplashController extends GetxController {
   @override
@@ -21,10 +20,10 @@ class SplashController extends GetxController {
 
     log('User bookings: $currentBookings');
 
-    if (currentBookings.isNotEmpty) {
-      Get.offAllNamed(AppRoutes.HOME);
-    } else {
-      Get.offAllNamed(AppRoutes.LOGIN);
-    }
+    // if (currentBookings.isNotEmpty) {
+    //   Get.offAllNamed(AppRoutes.HOME);
+    // } else {
+    //   Get.offAllNamed(AppRoutes.LOGIN);
+    // }
   }
 }
