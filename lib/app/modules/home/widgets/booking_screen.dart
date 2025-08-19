@@ -113,7 +113,7 @@ class BookingScreen extends StatelessWidget {
                       'Date: ${controller.selectedDate.value.toLocal().toString().split(' ')[0]}',
                     ),
                     Text('Time Slot: ${controller.selectedTime.value}'),
-                    Text('Price: \$${branch.pricePerHour}'),
+                    Text('Price: ${branch.pricePerHour} Rs/hour'),
                   ],
                 ),
               ),

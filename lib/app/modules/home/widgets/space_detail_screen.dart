@@ -81,7 +81,7 @@ class _SpaceDetailScreenState extends State<SpaceDetailScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${widget.branch.pricePerHour} / hour',
+                    '${widget.branch.pricePerHour} Rs/hour',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
